@@ -104,8 +104,15 @@ struct ArcCoordinates {
 //! @ingroup DataObjects
 class PointData : public PrimitiveData {  // NOLINT
  public:
+  // PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
+  //     : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
+
   PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
       : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
+    
+    PointData(Id id, BasicPoint3d point, int version, const AttributeMap& attributes = AttributeMap())
+      : PrimitiveData(id, version, attributes), point(point), point2d_{point.x(), point.y()} {}
+
   PointData(const PointData&) = delete;
   PointData& operator=(const LineStringData&) = delete;
   PointData(PointData&&) = default;
@@ -160,8 +167,8 @@ class ConstPoint2d : public ConstPrimitive<PointData> {
   using ConstPrimitive::ConstPrimitive;
 
   //! @brief Construct from an id and a point
-  ConstPoint2d(Id id, const BasicPoint3d& point, const AttributeMap& attributes = AttributeMap())
-      : ConstPrimitive<PointData>{std::make_shared<PointData>(id, point, attributes)} {}  // NOLINT
+  ConstPoint2d(Id id, const BasicPoint3d& point, const AttributeMap& attributes = AttributeMap(), int version = 0)
+      : ConstPrimitive<PointData>{std::make_shared<PointData>(id, point, version, attributes)} {}  // NOLINT
 
   //! @brief Construct from an id and coordinates
   /**
@@ -169,9 +176,14 @@ class ConstPoint2d : public ConstPrimitive<PointData> {
    * point, where z matters.
    */
   explicit ConstPoint2d(Id id = InvalId, double x = 0., double y = 0., double z = 0.,
-                        const AttributeMap& attributes = AttributeMap())
+                        const AttributeMap& attributes = AttributeMap(), int version = 0)
       : ConstPrimitive<PointData>{std::make_shared<PointData>(  // NOLINT
-            id, BasicPoint3d(x, y, z), attributes)} {}
+            id, BasicPoint3d(x, y, z), version, attributes)} {}
+  
+  // explicit ConstPoint2d(Id id = InvalId, double x = 0., double y = 0., double z = 0.,
+  //                       int version, const AttributeMap& attributes = AttributeMap())
+  //     : ConstPrimitive<PointData>{std::make_shared<PointData>(  // NOLINT
+  //           id, BasicPoint3d(x, y, z), version, attributes)} {}
 
   //! A ConstPoint 2d is implicitly convertible to a normal 2d point
   operator BasicPoint2d() const noexcept {  // NOLINT
@@ -207,6 +219,7 @@ class ConstPoint3d : public ConstPoint2d {
   static constexpr traits::Dimensions Dimension = traits::Dimensions::Three;
 
   using ConstPoint2d::ConstPoint2d;
+  // using ConstPoint2d::version;
   ConstPoint3d() = default;
   explicit ConstPoint3d(const ConstPoint2d& other) : ConstPoint2d(other) {}
 

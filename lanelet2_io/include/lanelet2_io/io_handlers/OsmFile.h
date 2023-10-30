@@ -28,16 +28,19 @@ struct Primitive {
   Primitive& operator=(const Primitive& rhs) = delete;
   virtual ~Primitive() = default;
   Primitive(Id id, Attributes attributes) : id{id}, attributes{std::move(attributes)} {}
+  Primitive(Id id, Attributes attributes, int version) : id{id}, attributes{std::move(attributes)}, version{version} {}
   virtual std::string type() = 0;
 
   Id id{0};
   Attributes attributes;
+  int version{0};
 };
 
 //! Osm node object
 struct Node : public Primitive {
   Node() = default;
   Node(Id id, Attributes attributes, GPSPoint point) : Primitive{id, std::move(attributes)}, point{point} {}
+  Node(Id id, Attributes attributes, GPSPoint point, int version) : Primitive{id, std::move(attributes), version}, point{point} {}
   std::string type() override { return "node"; }
   GPSPoint point;
 };

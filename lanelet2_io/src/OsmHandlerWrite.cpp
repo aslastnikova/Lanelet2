@@ -53,10 +53,10 @@ void removeAndFixPlaceholders(osm::Primitive** toRemove, osm::Roles& fromRoles,
 class ToFileWriter {
  public:
   static std::unique_ptr<osm::File> writeMap(const LaneletMap& laneletMap, const Projector& projector,
-                                             ErrorMessages& errors, const io::Configuration& params) {
+                                             ErrorMessages& errors, const io::Configuration& params, bool updateVersions = false) {
     ToFileWriter writer;
 
-    writer.writeNodes(laneletMap, projector);
+    writer.writeNodes(laneletMap, projector, updateVersions);
     writer.writeWays(laneletMap);
 
     // we have to wait until lanelets/areas are written
@@ -73,12 +73,17 @@ class ToFileWriter {
   ToFileWriter() = default;
 
   // writers for every primitive
-  void writeNodes(const LaneletMap& map, const Projector& projector) {
+  void writeNodes(const LaneletMap& map, const Projector& projector, bool updateVersions = false) {
     auto& osmNodes = file_->nodes;
     for (const auto& point : map.pointLayer) {
+      int version;
+      if (updateVersions){ version = point.version() + 1; }
+      else if (point.version() == 0){ version = 1; }
+      else{ version = point.version();}
+
       try {
         const GPSPoint gpsPoint = projector.reverse(point);
-        osmNodes.emplace(point.id(), osm::Node(point.id(), getAttributes(point.attributes()), gpsPoint));
+        osmNodes.emplace(point.id(), osm::Node(point.id(), getAttributes(point.attributes()), gpsPoint, version));
       } catch (ReverseProjectionError& e) {
         writeError(point.id(), e.what());
       }
@@ -296,9 +301,21 @@ void testAndPrintLocaleWarning(ErrorMessages& errors) {
 }
 }  // namespace
 
-void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params) const {
+// void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params) const {
+//   std::cout << "OsmWriter::write without version" << std::endl;
+//   testAndPrintLocaleWarning(errors);
+//   auto file = toOsmFile(laneletMap, errors, params);
+//   auto doc = osm::write(*file, params);
+//   auto res = doc->save_file(filename.c_str(), "  ");
+//   if (!res) {
+//     throw ParseError("Pugixml failed to write the map (unable to create file?)");
+//   }
+// }
+
+void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params,  bool updateVersions) const {
+  std::cout << "OsmWriter::write: " << updateVersions << std::endl;
   testAndPrintLocaleWarning(errors);
-  auto file = toOsmFile(laneletMap, errors, params);
+  auto file = toOsmFile(laneletMap, errors, params, updateVersions);
   auto doc = osm::write(*file, params);
   auto res = doc->save_file(filename.c_str(), "  ");
   if (!res) {
@@ -306,8 +323,8 @@ void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap,
   }
 }
 
-std::unique_ptr<osm::File> OsmWriter::toOsmFile(const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params) const {
-  return ToFileWriter::writeMap(laneletMap, projector(), errors, params);
+std::unique_ptr<osm::File> OsmWriter::toOsmFile(const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params, bool updateVersions) const {
+  return ToFileWriter::writeMap(laneletMap, projector(), errors, params, updateVersions);
 }
 }  // namespace io_handlers
 }  // namespace lanelet

@@ -134,7 +134,7 @@ class OsmFileWriter {
       xmlNode.append_attribute(keyword::Id) = LongLong(node.second.id);
       if (node.second.id > 0) {
         xmlNode.append_attribute(keyword::Visible) = "true";
-        xmlNode.append_attribute(keyword::Version) = 1;
+        xmlNode.append_attribute(keyword::Version) = toJosmStyle(node.second.version).c_str();
       }
       xmlNode.append_attribute(keyword::Lat) = toJosmStyle(node.second.point.lat).c_str();
       xmlNode.append_attribute(keyword::Lon) = toJosmStyle(node.second.point.lon).c_str();
@@ -216,7 +216,8 @@ class OsmFileParser {
       const auto ele = node.find_child_by_attribute(keyword::Tag, keyword::Key, keyword::Elevation)
                            .attribute(keyword::Value)
                            .as_double(0.);
-      nodes[id] = Node{id, attributes, {lat, lon, ele}};
+      const auto version = node.attribute(keyword::Version).as_int(0);
+      nodes[id] = Node{id, attributes, {lat, lon, ele}, version};
     }
     return nodes;
   }

@@ -90,7 +90,7 @@ class FromFileLoader {  // NOLINT
     for (const auto& nodeElem : nodes) {
       const auto& node = nodeElem.second;
       try {
-        points_.emplace(node.id, Point3d(node.id, projector.forward(node.point), getAttributes(node.attributes)));
+        points_.emplace(node.id, Point3d(node.id, projector.forward(node.point), getAttributes(node.attributes), node.version));
       } catch (ForwardProjectionError& e) {
         parserError(node.id, e.what());
       }
