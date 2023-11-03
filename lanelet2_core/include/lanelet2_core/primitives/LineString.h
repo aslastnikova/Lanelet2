@@ -141,6 +141,10 @@ class LineStringData : public PrimitiveData {
   explicit LineStringData(Id id) : PrimitiveData(id) {}
   LineStringData(Id id, Points3d points, AttributeMap attributes)
       : PrimitiveData(id, std::move(attributes)), points_(std::move(points)) {}
+
+  LineStringData(Id id, Points3d points, int version, AttributeMap attributes)
+      : PrimitiveData(id, version, std::move(attributes)), points_(std::move(points)) {}
+
   // NOLINTNEXTLINE
   using iterator = internal::ReverseAndForwardIterator<Points3d::iterator>;
   // NOLINTNEXTLINE
@@ -241,8 +245,12 @@ class ConstLineStringImpl : public ConstPrimitive<LineStringData> {
 
   //! Constructs a LineString or similar from an Id and a list of points
   explicit ConstLineStringImpl(Id id = InvalId, Points3d points = Points3d(),
-                               const AttributeMap& attributes = AttributeMap())
-      : ConstPrimitive{std::make_shared<LineStringData>(id, std::move(points), attributes)} {}
+                               const AttributeMap& attributes = AttributeMap(), int version = 0)
+      : ConstPrimitive{std::make_shared<LineStringData>(id, std::move(points), version, attributes)} {}
+  
+  // explicit ConstLineStringImpl(Id id = InvalId, Points3d points = Points3d(), int version = 0,
+  //                              const AttributeMap& attributes = AttributeMap())
+  //     : ConstPrimitive{std::make_shared<LineStringData>(id, std::move(points), version, attributes)} {}
 
   //! Constructs a linestring from the data object of another linestring
   explicit ConstLineStringImpl(const std::shared_ptr<const LineStringData>& data, bool inverted = false)

@@ -292,6 +292,7 @@ class LaneletLayer : public PrimitiveLayer<Lanelet> {
   LaneletLayer operator=(LaneletLayer&) = delete;
   Lanelets findUsages(const RegulatoryElementConstPtr& regElem);
   ConstLanelets findUsages(const RegulatoryElementConstPtr& regElem) const;
+  void updateVersions();
 
  private:
   friend class LaneletMap;
@@ -540,6 +541,9 @@ void registerId(Id id);
 
 template <typename PrimitiveT>
 std::vector<ConstLayerPrimitive<PrimitiveT>> findUsages(const PrimitiveLayer<PrimitiveT>& layer, Id id);
+
+template <typename PrimitiveT>
+void updateVersions(const PrimitiveLayer<PrimitiveT>& layer);
 
 ConstLanelets findUsagesInLanelets(const LaneletMapLayers& map, const ConstPoint3d& p);
 ConstAreas findUsagesInAreas(const LaneletMapLayers& map, const ConstPoint3d& p);

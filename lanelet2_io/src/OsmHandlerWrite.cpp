@@ -57,11 +57,11 @@ class ToFileWriter {
     ToFileWriter writer;
 
     writer.writeNodes(laneletMap, projector, updateVersions);
-    writer.writeWays(laneletMap);
+    writer.writeWays(laneletMap, updateVersions);
 
     // we have to wait until lanelets/areas are written
     auto unparsedLaneletAndAreaParameters = writer.appendRegulatoryElements(laneletMap.regulatoryElementLayer);
-    writer.appendLanelets(laneletMap.laneletLayer);
+    writer.appendLanelets(laneletMap.laneletLayer, updateVersions);
     writer.appendAreas(laneletMap.areaLayer);
     writer.resolveUnparsedMembers(unparsedLaneletAndAreaParameters);
 
@@ -90,26 +90,32 @@ class ToFileWriter {
     }
   }
 
-  void writeWays(const LaneletMap& map) {
+  void writeWays(const LaneletMap& map, bool updateVersions = false) {
     auto& osmWays = file_->ways;
     for (const auto& lineString : map.lineStringLayer) {
       if (lineString.inverted()) {
-        writeOsmWay(lineString.invert(), osmWays);
+        writeOsmWay(lineString.invert(), osmWays, updateVersions);
       } else {
-        writeOsmWay(lineString, osmWays);
+        writeOsmWay(lineString, osmWays, updateVersions);
       }
     }
     for (const auto& polygon : map.polygonLayer) {
-      writeOsmWay(polygon, osmWays);
+      writeOsmWay(polygon, osmWays, updateVersions);
     }
   }
 
-  void appendLanelets(const LaneletLayer& laneletLayer) {
+  void appendLanelets(const LaneletLayer& laneletLayer, bool updateVersions = false) {
     for (const auto& lanelet : laneletLayer) {
       const auto id = lanelet.id();
       auto attributes = getAttributes(lanelet.attributes());
       attributes.emplace(AttributeNamesString::Type, AttributeValueString::Lanelet);
-      auto& insertedRelation = file_->relations.emplace(id, osm::Relation(id, attributes)).first->second;
+
+      int version;
+      if (updateVersions){ version = lanelet.version() + 1; }
+      else if (lanelet.version() == 0){ version = 1; }
+      else{ version = lanelet.version();}
+
+      auto& insertedRelation = file_->relations.emplace(id, osm::Relation(id, attributes, version)).first->second;
       auto& members = insertedRelation.members;
       tryInsertMembers(members, RoleNameString::Left, lanelet.leftBound().id(), file_->ways, id);
       tryInsertMembers(members, RoleNameString::Right, lanelet.rightBound().id(), file_->ways, id);
@@ -173,16 +179,23 @@ class ToFileWriter {
   }
 
   template <typename PrimT>
-  void writeOsmWay(const PrimT& mapWay, osm::Ways& osmWays) {
+  void writeOsmWay(const PrimT& mapWay, osm::Ways& osmWays, bool updateVersions) {
     const auto id = mapWay.id();
     auto wayAttributes = getAttributes(mapWay.attributes());
+
+    int version;
+    if (updateVersions){ version = mapWay.version() + 1; }
+    else if (mapWay.version() == 0){ version = 1; }
+    else{ version = mapWay.version();}
+
     if (std::is_same<PrimT, ConstPolygon3d>::value) {
       wayAttributes.emplace(AttributeNamesString::Area, "true");
     }
     try {
       const auto wayNodes =
           utils::transform(mapWay, [&nodes = file_->nodes](const auto& elem) { return &nodes.at(elem.id()); });
-      osmWays.emplace(id, osm::Way(id, std::move(wayAttributes), std::move(wayNodes)));
+      auto way = osm::Way(id, std::move(wayAttributes), std::move(wayNodes), version);
+      osmWays.emplace(id, osm::Way(id, std::move(wayAttributes), std::move(wayNodes), version));
     } catch (NoSuchPrimitiveError& e) {
       writeError(id, "Way has points that are not point layer: "s + e.what());
     } catch (std::out_of_range&) {
@@ -301,19 +314,7 @@ void testAndPrintLocaleWarning(ErrorMessages& errors) {
 }
 }  // namespace
 
-// void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params) const {
-//   std::cout << "OsmWriter::write without version" << std::endl;
-//   testAndPrintLocaleWarning(errors);
-//   auto file = toOsmFile(laneletMap, errors, params);
-//   auto doc = osm::write(*file, params);
-//   auto res = doc->save_file(filename.c_str(), "  ");
-//   if (!res) {
-//     throw ParseError("Pugixml failed to write the map (unable to create file?)");
-//   }
-// }
-
 void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params,  bool updateVersions) const {
-  std::cout << "OsmWriter::write: " << updateVersions << std::endl;
   testAndPrintLocaleWarning(errors);
   auto file = toOsmFile(laneletMap, errors, params, updateVersions);
   auto doc = osm::write(*file, params);

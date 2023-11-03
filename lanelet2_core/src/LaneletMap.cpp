@@ -460,6 +460,10 @@ ConstLanelets LaneletLayer::findUsages(const RegulatoryElementConstPtr& regElem)
                                               [](const auto& elem) { return traits::toConst(elem.second); });
 }
 
+void LaneletLayer::updateVersions() {
+   for(auto elem{this->begin()}; elem != this->end(); elem++ ) (*elem).setVersion((*elem).version() + 1);
+}
+
 template <typename T>
 PrimitiveLayer<T>::~PrimitiveLayer() noexcept = default;
 template <typename T>
@@ -809,6 +813,15 @@ ConstAreas findUsagesInAreas(const LaneletMapLayers& map, const ConstPoint3d& p)
   areas.erase(remove, areas.end());
   return areas;
 }
+
+// template <typename PrimitiveT>
+// void updateVersions(const PrimitiveLayer<PrimitiveT>& layer) {
+
+//    for(auto elem{layer.begin()}; elem !=layer.end(); elem++ )
+//     {
+//         std::cout << *elem << std::endl;
+//     }
+// }
 
 LaneletMapUPtr createMap(const Points3d& fromPoints) {
   return std::make_unique<LaneletMap>(LaneletLayer::Map(), AreaLayer::Map(), RegulatoryElementLayer::Map(),

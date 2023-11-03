@@ -50,6 +50,8 @@ struct Way : public Primitive {
   Way() = default;
   Way(Id id, Attributes attributes, std::vector<Node*> nodes)
       : Primitive{id, std::move(attributes)}, nodes{std::move(nodes)} {}
+  Way(Id id, Attributes attributes, std::vector<Node*> nodes, int version)
+      : Primitive{id, std::move(attributes), version}, nodes{std::move(nodes)} {}
   std::string type() override { return "way"; }
   std::vector<Node*> nodes;
 };
@@ -59,6 +61,8 @@ struct Relation : public Primitive {
   Relation() = default;
   Relation(Id id, Attributes attributes, Roles roles = Roles())
       : Primitive{id, std::move(attributes)}, members{std::move(roles)} {}
+  Relation(Id id, Attributes attributes, int version, Roles roles = Roles())
+      : Primitive{id, std::move(attributes), version}, members{std::move(roles)} {}
   std::string type() override { return "relation"; }
   Roles members;
 };

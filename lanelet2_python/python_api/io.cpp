@@ -50,9 +50,9 @@ void writeProjectorWrapper(const std::string& filename, const LaneletMap& map, c
   write(filename, map, projector, nullptr, params.get_value_or(io::Configuration()), updateVersion);
 }
 
-ErrorMessages writeWithErrorWrapper(const std::string& filename, const LaneletMap& map, const Projector& projector, const Optional<io::Configuration>& params) {
+ErrorMessages writeWithErrorWrapper(const std::string& filename, const LaneletMap& map, const Projector& projector, bool updateVersion, const Optional<io::Configuration>& params) {
   ErrorMessages errs;
-  write(filename, map, projector, &errs, params.get_value_or(io::Configuration()));
+  write(filename, map, projector, &errs, params.get_value_or(io::Configuration()), updateVersion);
   return errs;
 }
 
@@ -82,22 +82,12 @@ BOOST_PYTHON_MODULE(PYTHON_API_MODULE_NAME) {  // NOLINT
   py::def("write", writeProjectorWrapper, (py::arg("filename"), py::arg("map"), py::arg("projector"), py::arg("update_version") = false, py::arg("params") = Optional<io::Configuration>{}),
       "Writes the map to a file. The extension determines which format will "
       "be used (usually .osm)");
+
   py::def("write", writeWrapper, (py::arg("filename"), py::arg("map"), py::arg("origin"), py::arg("update_version") = false, py::arg("params") = Optional<io::Configuration>{}),
       "Writes the map to a file. The extension determines which format will "
       "be used (usually .osm)");
 
-  // py::def("write", writeWrapper, (py::arg("filename"), py::arg("map"), py::arg("origin"), py::arg("update_version") = false, Optional<io::Configuration>{}),
-  //     "Writes the map to a file. The extension determines which format will "
-  //     "be used (usually .osm)");
-
-  py::def("write", writeProjectorWrapper, (py::arg("filename"), py::arg("map"), py::arg("projector"), false,  py::arg("params") = Optional<io::Configuration>{}),
-      "Writes the map to a file. The extension determines which format will "
-      "be used (usually .osm)");
-  py::def("write", writeWrapper, (py::arg("filename"), py::arg("map"), py::arg("origin"), false, py::arg("params") = Optional<io::Configuration>{}),
-      "Writes the map to a file. The extension determines which format will "
-      "be used (usually .osm)");
-
-  py::def("writeRobust", writeWithErrorWrapper, (py::arg("filename"), py::arg("map"), py::arg("projector"), py::arg("params") = Optional<io::Configuration>{}),
+  py::def("writeRobust", writeWithErrorWrapper, (py::arg("filename"), py::arg("map"), py::arg("projector"), py::arg("update_version") = false, py::arg("params") = Optional<io::Configuration>{}),
       "Writes a map robustly and returns writer errors. If there are errors, "
       "the map will be incomplete somewhere.");
 }

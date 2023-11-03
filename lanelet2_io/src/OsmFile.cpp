@@ -155,7 +155,7 @@ class OsmFileWriter {
       xmlNode.append_attribute(keyword::Id) = LongLong(way.id);
       if (way.id > 0) {
         xmlNode.append_attribute(keyword::Visible) = "true";
-        xmlNode.append_attribute(keyword::Version) = 1;
+        xmlNode.append_attribute(keyword::Version) = way.version;
       }
       for (const auto& node : way.nodes) {
         auto nd = xmlNode.append_child(keyword::Nd);
@@ -172,7 +172,7 @@ class OsmFileWriter {
       xmlNode.append_attribute(keyword::Id) = LongLong(relation.id);
       if (relation.id > 0) {
         xmlNode.append_attribute(keyword::Visible) = "true";
-        xmlNode.append_attribute(keyword::Version) = 1;
+        xmlNode.append_attribute(keyword::Version) = relation.version;
       }
       for (const auto& role : relation.members) {
         auto xmlMember = xmlNode.append_child(keyword::Member);
@@ -231,6 +231,7 @@ class OsmFileParser {
       }
       const auto id = node.attribute(keyword::Id).as_llong(InvalId);
       const auto attributes = tags(node);
+      const auto version = node.attribute(keyword::Version).as_int(0);
       const auto nodeIds = [&node] {
         Ids ids;
         for (auto refNode = node.child(keyword::Nd); refNode;  // NOLINT
@@ -245,7 +246,7 @@ class OsmFileParser {
       } catch (std::out_of_range&) {
         reportParseError(id, "Way references nonexisting points");
       }
-      ways[id] = Way{id, attributes, wayNodes};
+      ways[id] = Way{id, attributes, wayNodes, version};
     }
     return ways;
   }
@@ -261,8 +262,9 @@ class OsmFileParser {
         continue;
       }
       const auto id = node.attribute(keyword::Id).as_llong(InvalId);
+      const auto version = node.attribute(keyword::Version).as_int(0);
       const auto attributes = tags(node);
-      auto& relation = relations.emplace(id, Relation{id, attributes, {}}).first->second;
+      auto& relation = relations.emplace(id, Relation{id, attributes, version, {}}).first->second;
 
       // resolve members
       auto& roles = relation.members;
