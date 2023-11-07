@@ -152,6 +152,17 @@ class PrimitiveLayer {
    */
   size_t size() const { return elements_.size(); }
 
+  /**
+   * @brief increments versions for all elements in this layer
+   */
+  void updateVersions();
+
+  /**
+   * @brief sets target version to all elements in this layer
+   * @param version target version
+   */
+  void setVersions(int version);
+
   using ConstSearchFunction = std::function<bool(const internal::SearchBoxT<T>& box, const ConstPrimitiveT& prim)>;
   using SearchFunction = std::function<bool(const internal::SearchBoxT<T>& box, const PrimitiveT& prim)>;
 
@@ -286,13 +297,13 @@ class AreaLayer : public PrimitiveLayer<Area> {
 class LaneletLayer : public PrimitiveLayer<Lanelet> {
  public:
   using PrimitiveLayer::findUsages;
+  using PrimitiveLayer::updateVersions;
   LaneletLayer() = default;
   ~LaneletLayer() = default;
   LaneletLayer(const LaneletLayer&) = delete;
   LaneletLayer operator=(LaneletLayer&) = delete;
   Lanelets findUsages(const RegulatoryElementConstPtr& regElem);
   ConstLanelets findUsages(const RegulatoryElementConstPtr& regElem) const;
-  void updateVersions();
 
  private:
   friend class LaneletMap;

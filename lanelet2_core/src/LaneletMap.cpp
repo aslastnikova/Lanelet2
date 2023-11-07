@@ -15,6 +15,8 @@
 #include "lanelet2_core/geometry/Polygon.h"
 #include "lanelet2_core/geometry/RegulatoryElement.h"
 
+#include <type_traits>
+
 // boost geometry stuff
 namespace bgi = boost::geometry::index;
 
@@ -460,10 +462,6 @@ ConstLanelets LaneletLayer::findUsages(const RegulatoryElementConstPtr& regElem)
                                               [](const auto& elem) { return traits::toConst(elem.second); });
 }
 
-void LaneletLayer::updateVersions() {
-   for(auto elem{this->begin()}; elem != this->end(); elem++ ) (*elem).setVersion((*elem).version() + 1);
-}
-
 template <typename T>
 PrimitiveLayer<T>::~PrimitiveLayer() noexcept = default;
 template <typename T>
@@ -474,6 +472,36 @@ PrimitiveLayer<T>& PrimitiveLayer<T>::operator=(PrimitiveLayer&& rhs) noexcept =
 template <typename T>
 typename PrimitiveLayer<T>::const_iterator PrimitiveLayer<T>::find(Id id) const {
   return elements_.find(id);
+}
+
+template <typename T>
+struct is_shared_ptr : std::false_type{ };
+
+template <typename T>
+struct is_shared_ptr<std::shared_ptr<T>> : std::true_type{};
+
+template <typename T>
+auto remove_ptr(T& object) -> std::enable_if_t<is_shared_ptr<T>::value, decltype(*object)> {return *object;}
+
+template <typename T>
+auto remove_ptr(T& object) -> std::enable_if_t<!is_shared_ptr<T>::value, T&> {return object;}
+
+template <typename T>
+void PrimitiveLayer<T>::updateVersions() {
+  for (auto& pair : elements_) {
+
+    auto& elem = remove_ptr(pair.second);
+    elem.setVersion(elem.version() + 1);
+  }
+}
+
+template <typename T>
+void PrimitiveLayer<T>::setVersions(int version) {
+  for (auto& pair : elements_) {
+
+    auto& elem = remove_ptr(pair.second);
+    elem.setVersion(version);
+  }
 }
 
 template <typename T>

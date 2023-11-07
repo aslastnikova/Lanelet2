@@ -411,7 +411,13 @@ auto wrapLayer(const char* layerName) {
           "Retrieve an element by its ID")
       .def("search", search, arg("boundingBox"), "Search in a search area defined by a 2D bounding box")
       .def("nearest", nearest, (arg("point"), arg("n") = 1), "Gets a list of the nearest n primitives to a given point")
-      .def("uniqueId", &LayerT::uniqueId, "Retrieve an ID that not yet used in this layer");
+      .def("uniqueId", &LayerT::uniqueId, "Retrieve an ID that not yet used in this layer")
+      .def(
+          "setVersions", +[](LayerT& self, int version) { return self.setVersions(version); }, arg("version"),
+          "set given version to primitives")
+      .def(
+          "updateVersions", +[](LayerT& self) { return self.updateVersions(); },
+          "update primitives versions");
 }
 
 template <typename PrimT>
@@ -1374,10 +1380,7 @@ BOOST_PYTHON_MODULE(PYTHON_API_MODULE_NAME) {  // NOLINT
           "Find lanelets with this regualtory element")
       .def(
           "findUsages", +[](LaneletLayer& self, ConstLineString3d& ls) { return self.findUsages(ls); }, arg("ls"),
-          "Lanelets with this linestring")
-      .def(
-          "updateVersions", +[](LaneletLayer& self) { return self.updateVersions(); },
-          "update lanelets versions");
+          "Lanelets with this linestring");
   wrapLayer<PolygonLayer>("PolygonLayer")
       .def(
           "findUsages", +[](PolygonLayer& self, ConstPoint3d& p) { return self.findUsages(p); }, arg("point"),
