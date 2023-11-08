@@ -222,11 +222,6 @@ void setZWrapper(T& obj, double z) {
 }
 
 template <typename T>
-void setVersionWrapper(T& obj, int version) {
-  obj.setVersion(version);
-}
-
-template <typename T>
 double getXWrapper(const T& obj) {
   return obj.x();
 }
@@ -238,11 +233,6 @@ double getYWrapper(const T& obj) {
 template <typename T>
 double getZWrapper(const T& obj) {
   return obj.z();
-}
-
-template <typename T>
-int getVersionWrapper(const T& obj) {
-  return obj.version();
 }
 
 template <typename Func>
@@ -265,6 +255,8 @@ class IsPrimitive : public def_visitor<IsPrimitive<PrimT>> {
     const AttributeMap& (PrimT::*attr)() const = &PrimT::attributes;
     c.add_property("id", &PrimT::id, &PrimT::setId,
                    "Unique ID of this primitive. 0 is a special value for temporary objects.");
+    c.add_property("version", &PrimT::version, &PrimT::setVersion,
+                   "Version of this primitive. 0 is a special value for newly created objects, on write it will be set to 1.");
     c.add_property("attributes", getRefFunc(attr), setAttributeWrapper<PrimT>,
                    "The attributes of this primitive as key value types. Behaves like a dictionary.");
     c.def(self == self);  // NOLINT
@@ -754,7 +746,6 @@ BOOST_PYTHON_MODULE(PYTHON_API_MODULE_NAME) {  // NOLINT
       .add_property("x", getXWrapper<Point3d>, setXWrapper<Point3d>, "x coordinate")
       .add_property("y", getYWrapper<Point3d>, setYWrapper<Point3d>, "y coordinate")
       .add_property("z", getZWrapper<Point3d>, setZWrapper<Point3d>, "z coordinate")
-      .add_property("version", getVersionWrapper<Point3d>, setVersionWrapper<Point3d>, "object version")
       .def(
           "__repr__",
           +[](const Point3d& p) { return makeRepr("Point3d", p.id(), p.x(), p.y(), p.z(), repr(p.attributes())); })
@@ -835,7 +826,6 @@ BOOST_PYTHON_MODULE(PYTHON_API_MODULE_NAME) {  // NOLINT
       "to python lists. Create mutable Linestring3d instead. Use lanelet2.geometry.to2D to convert to Linestring2d."
       "convert to Linestring2d.",
       init<Id, Points3d, AttributeMap>((arg("id") = 0, arg("points") = Points3d{}, arg("attributes") = AttributeMap())))
-      .add_property("version", getVersionWrapper<LineString3d>, setVersionWrapper<LineString3d>, "object version")
       .def(init<LineString2d>(arg("linestring"),
                               "Converts a 2D linestring to a 3D linestring, sharing the same underlying data."))
       .def("invert", &LineString3d::invert,
@@ -1004,7 +994,6 @@ BOOST_PYTHON_MODULE(PYTHON_API_MODULE_NAME) {  // NOLINT
            arg("regelems") = RegulatoryElementPtrs{}),
           "Create Lanelet from an ID, its left and right boundary and (optionally) attributes"))
       .def(IsPrimitive<Lanelet>())
-      .add_property("version", getVersionWrapper<Lanelet>, setVersionWrapper<Lanelet>, "object version")
       .add_property(
           "centerline", &Lanelet::centerline, &Lanelet::setCenterline,
           "Centerline of the lanelet (immutable). This is usualy calculated on-the-fly from the left and right "
@@ -1180,6 +1169,8 @@ BOOST_PYTHON_MODULE(PYTHON_API_MODULE_NAME) {  // NOLINT
       no_init)
       .def(IsConstPrimitive<RegulatoryElement>())
       .add_property("id", &RegulatoryElement::id, &RegulatoryElement::setId)
+      .add_property("version", &RegulatoryElement::version, &RegulatoryElement::setVersion,
+                   "Version of this primitive. 0 is a special value for newly created objects, on write it will be set to 1.")
       .add_property("parameters", static_cast<GetParamSig>(&RegulatoryElement::getParameters),
                     "The parameters (ie traffic signs, lanelets) that affect "
                     "this RegulatoryElement")
