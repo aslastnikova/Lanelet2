@@ -142,7 +142,7 @@ class LineStringData : public PrimitiveData {
   LineStringData(Id id, Points3d points, AttributeMap attributes)
       : PrimitiveData(id, std::move(attributes)), points_(std::move(points)) {}
 
-  LineStringData(Id id, Points3d points, int version, AttributeMap attributes)
+  LineStringData(Id id, Points3d points, uint32_t version, AttributeMap attributes)
       : PrimitiveData(id, version, std::move(attributes)), points_(std::move(points)) {}
 
   // NOLINTNEXTLINE
@@ -245,12 +245,8 @@ class ConstLineStringImpl : public ConstPrimitive<LineStringData> {
 
   //! Constructs a LineString or similar from an Id and a list of points
   explicit ConstLineStringImpl(Id id = InvalId, Points3d points = Points3d(),
-                               const AttributeMap& attributes = AttributeMap(), int version = 0)
+                               const AttributeMap& attributes = AttributeMap(), uint32_t version = 0)
       : ConstPrimitive{std::make_shared<LineStringData>(id, std::move(points), version, attributes)} {}
-  
-  // explicit ConstLineStringImpl(Id id = InvalId, Points3d points = Points3d(), int version = 0,
-  //                              const AttributeMap& attributes = AttributeMap())
-  //     : ConstPrimitive{std::make_shared<LineStringData>(id, std::move(points), version, attributes)} {}
 
   //! Constructs a linestring from the data object of another linestring
   explicit ConstLineStringImpl(const std::shared_ptr<const LineStringData>& data, bool inverted = false)

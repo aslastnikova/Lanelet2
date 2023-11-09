@@ -42,10 +42,10 @@ class PrimitiveData {
   
   //explicit PrimitiveData(Id id, AttributeMap attributes = AttributeMap()) : id{id}, attributes{std::move(attributes)}, version(0) {}
   explicit PrimitiveData(Id id, AttributeMap attributes = AttributeMap()) : id{id}, attributes{std::move(attributes)} {}
-  explicit PrimitiveData(Id id, int version, AttributeMap attributes = AttributeMap()) : id{id}, attributes{std::move(attributes)}, version{version} {}
+  explicit PrimitiveData(Id id, uint32_t version, AttributeMap attributes = AttributeMap()) : id{id}, attributes{std::move(attributes)}, version{version} {}
 
   Id id{InvalId};           //!< Id of this primitive (unique across one map)
-  int version{0};           //!< Version of this primitive 
+  uint32_t version{0};           //!< Version of this primitive 
   AttributeMap attributes;  //!< attributes of this primitive
  protected:
   ~PrimitiveData() = default;
@@ -99,7 +99,7 @@ class ConstPrimitive {
    */
   Id id() const noexcept { return constData_->id; }
 
-  int version() const noexcept { return constData_->version; }
+  uint32_t version() const noexcept { return constData_->version; }
 
   //! check whether this primitive has a specific attribute
   bool hasAttribute(const std::string& name) const noexcept { return attributes().find(name) != attributes().end(); }
@@ -275,7 +275,7 @@ class Primitive : public DerivedConstPrimitive {
    */
   void setId(Id id) noexcept { data()->id = id; }
 
-  void setVersion(int version) noexcept { data()->version = version; }
+  void setVersion(uint32_t version) noexcept { data()->version = version; }
 
   //! @brief set or overwrite an attribute
   void setAttribute(const std::string& name, const Attribute& attribute) { attributes()[name] = attribute; }

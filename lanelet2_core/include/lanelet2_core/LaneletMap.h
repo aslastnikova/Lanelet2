@@ -161,7 +161,7 @@ class PrimitiveLayer {
    * @brief sets target version to all elements in this layer
    * @param version target version
    */
-  void setVersions(int version);
+  void setVersions(uint32_t version);
 
   using ConstSearchFunction = std::function<bool(const internal::SearchBoxT<T>& box, const ConstPrimitiveT& prim)>;
   using SearchFunction = std::function<bool(const internal::SearchBoxT<T>& box, const PrimitiveT& prim)>;

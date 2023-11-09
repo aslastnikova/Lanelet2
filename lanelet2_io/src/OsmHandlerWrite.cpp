@@ -76,10 +76,10 @@ class ToFileWriter {
   void writeNodes(const LaneletMap& map, const Projector& projector, bool updateVersions = false) {
     auto& osmNodes = file_->nodes;
     for (const auto& point : map.pointLayer) {
-      int version;
-      if (updateVersions){ version = point.version() + 1; }
-      else if (point.version() == 0){ version = 1; }
-      else{ version = point.version();}
+
+      const uint32_t version = updateVersions ?
+                     point.version() + 1  :
+                     point.version() == 0 ? 1 : point.version();
 
       try {
         const GPSPoint gpsPoint = projector.reverse(point);
@@ -110,10 +110,9 @@ class ToFileWriter {
       auto attributes = getAttributes(lanelet.attributes());
       attributes.emplace(AttributeNamesString::Type, AttributeValueString::Lanelet);
 
-      int version;
-      if (updateVersions){ version = lanelet.version() + 1; }
-      else if (lanelet.version() == 0){ version = 1; }
-      else{ version = lanelet.version();}
+      const uint32_t version = updateVersions ?
+                     lanelet.version() + 1  :
+                     lanelet.version() == 0 ? 1 : lanelet.version();
 
       auto& insertedRelation = file_->relations.emplace(id, osm::Relation(id, attributes, version)).first->second;
       auto& members = insertedRelation.members;
@@ -183,10 +182,9 @@ class ToFileWriter {
     const auto id = mapWay.id();
     auto wayAttributes = getAttributes(mapWay.attributes());
 
-    int version;
-    if (updateVersions){ version = mapWay.version() + 1; }
-    else if (mapWay.version() == 0){ version = 1; }
-    else{ version = mapWay.version();}
+    const uint32_t version = updateVersions ?
+                   mapWay.version() + 1  :
+                   mapWay.version() == 0 ? 1 : mapWay.version();
 
     if (std::is_same<PrimT, ConstPolygon3d>::value) {
       wayAttributes.emplace(AttributeNamesString::Area, "true");

@@ -28,19 +28,19 @@ struct Primitive {
   Primitive& operator=(const Primitive& rhs) = delete;
   virtual ~Primitive() = default;
   Primitive(Id id, Attributes attributes) : id{id}, attributes{std::move(attributes)} {}
-  Primitive(Id id, Attributes attributes, int version) : id{id}, attributes{std::move(attributes)}, version{version} {}
+  Primitive(Id id, Attributes attributes, uint32_t version) : id{id}, attributes{std::move(attributes)}, version{version} {}
   virtual std::string type() = 0;
 
   Id id{0};
   Attributes attributes;
-  int version{0};
+  uint32_t version{0};
 };
 
 //! Osm node object
 struct Node : public Primitive {
   Node() = default;
   Node(Id id, Attributes attributes, GPSPoint point) : Primitive{id, std::move(attributes)}, point{point} {}
-  Node(Id id, Attributes attributes, GPSPoint point, int version) : Primitive{id, std::move(attributes), version}, point{point} {}
+  Node(Id id, Attributes attributes, GPSPoint point, uint32_t version) : Primitive{id, std::move(attributes), version}, point{point} {}
   std::string type() override { return "node"; }
   GPSPoint point;
 };
@@ -50,7 +50,7 @@ struct Way : public Primitive {
   Way() = default;
   Way(Id id, Attributes attributes, std::vector<Node*> nodes)
       : Primitive{id, std::move(attributes)}, nodes{std::move(nodes)} {}
-  Way(Id id, Attributes attributes, std::vector<Node*> nodes, int version)
+  Way(Id id, Attributes attributes, std::vector<Node*> nodes, uint32_t version)
       : Primitive{id, std::move(attributes), version}, nodes{std::move(nodes)} {}
   std::string type() override { return "way"; }
   std::vector<Node*> nodes;
@@ -61,7 +61,7 @@ struct Relation : public Primitive {
   Relation() = default;
   Relation(Id id, Attributes attributes, Roles roles = Roles())
       : Primitive{id, std::move(attributes)}, members{std::move(roles)} {}
-  Relation(Id id, Attributes attributes, int version, Roles roles = Roles())
+  Relation(Id id, Attributes attributes, uint32_t version, Roles roles = Roles())
       : Primitive{id, std::move(attributes), version}, members{std::move(roles)} {}
   std::string type() override { return "relation"; }
   Roles members;

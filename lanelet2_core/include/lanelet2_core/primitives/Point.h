@@ -110,7 +110,7 @@ class PointData : public PrimitiveData {  // NOLINT
   PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
       : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
     
-    PointData(Id id, BasicPoint3d point, int version, const AttributeMap& attributes = AttributeMap())
+    PointData(Id id, BasicPoint3d point, uint32_t version, const AttributeMap& attributes = AttributeMap())
       : PrimitiveData(id, version, attributes), point(point), point2d_{point.x(), point.y()} {}
 
   PointData(const PointData&) = delete;
@@ -167,7 +167,7 @@ class ConstPoint2d : public ConstPrimitive<PointData> {
   using ConstPrimitive::ConstPrimitive;
 
   //! @brief Construct from an id and a point
-  ConstPoint2d(Id id, const BasicPoint3d& point, const AttributeMap& attributes = AttributeMap(), int version = 0)
+  ConstPoint2d(Id id, const BasicPoint3d& point, const AttributeMap& attributes = AttributeMap(), uint32_t version = 0)
       : ConstPrimitive<PointData>{std::make_shared<PointData>(id, point, version, attributes)} {}  // NOLINT
 
   //! @brief Construct from an id and coordinates
@@ -176,14 +176,9 @@ class ConstPoint2d : public ConstPrimitive<PointData> {
    * point, where z matters.
    */
   explicit ConstPoint2d(Id id = InvalId, double x = 0., double y = 0., double z = 0.,
-                        const AttributeMap& attributes = AttributeMap(), int version = 0)
+                        const AttributeMap& attributes = AttributeMap(), uint32_t version = 0)
       : ConstPrimitive<PointData>{std::make_shared<PointData>(  // NOLINT
             id, BasicPoint3d(x, y, z), version, attributes)} {}
-  
-  // explicit ConstPoint2d(Id id = InvalId, double x = 0., double y = 0., double z = 0.,
-  //                       int version, const AttributeMap& attributes = AttributeMap())
-  //     : ConstPrimitive<PointData>{std::make_shared<PointData>(  // NOLINT
-  //           id, BasicPoint3d(x, y, z), version, attributes)} {}
 
   //! A ConstPoint 2d is implicitly convertible to a normal 2d point
   operator BasicPoint2d() const noexcept {  // NOLINT

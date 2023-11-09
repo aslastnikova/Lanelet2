@@ -496,7 +496,7 @@ void PrimitiveLayer<T>::updateVersions() {
 }
 
 template <typename T>
-void PrimitiveLayer<T>::setVersions(int version) {
+void PrimitiveLayer<T>::setVersions(uint32_t version) {
   for (auto& pair : elements_) {
 
     auto& elem = remove_ptr(pair.second);
