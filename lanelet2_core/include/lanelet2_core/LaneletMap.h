@@ -297,7 +297,6 @@ class AreaLayer : public PrimitiveLayer<Area> {
 class LaneletLayer : public PrimitiveLayer<Lanelet> {
  public:
   using PrimitiveLayer::findUsages;
-  using PrimitiveLayer::updateVersions;
   LaneletLayer() = default;
   ~LaneletLayer() = default;
   LaneletLayer(const LaneletLayer&) = delete;

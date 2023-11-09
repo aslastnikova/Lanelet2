@@ -114,7 +114,7 @@ class ToFileWriter {
                      lanelet.version() + 1  :
                      lanelet.version() == 0 ? 1 : lanelet.version();
 
-      auto& insertedRelation = file_->relations.emplace(id, osm::Relation(id, attributes, version)).first->second;
+      auto& insertedRelation = file_->relations.emplace(id, osm::Relation(id, attributes, {}, version)).first->second;
       auto& members = insertedRelation.members;
       tryInsertMembers(members, RoleNameString::Left, lanelet.leftBound().id(), file_->ways, id);
       tryInsertMembers(members, RoleNameString::Right, lanelet.rightBound().id(), file_->ways, id);

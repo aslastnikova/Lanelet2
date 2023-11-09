@@ -25,16 +25,16 @@ class LaneletData : public PrimitiveData {
    * @brief Constructs a new, valid LaneletData object
    * @see ConstLanelet::ConstLanelet
    */
-  LaneletData(Id id, LineString3d leftBound, LineString3d rightBound, const AttributeMap& attributes = AttributeMap(),
-              RegulatoryElementPtrs regulatoryElements = RegulatoryElementPtrs())
-      : PrimitiveData(id, attributes),
-        leftBound_{std::move(leftBound)},
-        rightBound_{std::move(rightBound)},
-        regulatoryElements_{std::move(regulatoryElements)} {}
+  // LaneletData(Id id, LineString3d leftBound, LineString3d rightBound, const AttributeMap& attributes = AttributeMap(),
+  //             RegulatoryElementPtrs regulatoryElements = RegulatoryElementPtrs())
+  //     : PrimitiveData(id, attributes),
+  //       leftBound_{std::move(leftBound)},
+  //       rightBound_{std::move(rightBound)},
+  //       regulatoryElements_{std::move(regulatoryElements)} {}
 
-  LaneletData(Id id, LineString3d leftBound, LineString3d rightBound, uint32_t version, const AttributeMap& attributes = AttributeMap(),
-              RegulatoryElementPtrs regulatoryElements = RegulatoryElementPtrs())
-      : PrimitiveData(id, version, attributes),
+  LaneletData(Id id, LineString3d leftBound, LineString3d rightBound, const AttributeMap& attributes = AttributeMap(),
+              RegulatoryElementPtrs regulatoryElements = RegulatoryElementPtrs(), uint32_t version = 0)
+      : PrimitiveData(id, attributes, version),
         leftBound_{std::move(leftBound)},
         rightBound_{std::move(rightBound)},
         regulatoryElements_{std::move(regulatoryElements)} {}
@@ -148,16 +148,16 @@ class ConstLanelet : public ConstPrimitive<LaneletData> {
       : ConstLanelet(std::make_shared<LaneletData>(id, LineString3d(), LineString3d()), false) {}
 
   //! Constructs a lanelet from id, attributes, regulatoryElements and bounds.
-  ConstLanelet(Id id, const LineString3d& leftBound, const LineString3d& rightBound,
-               const AttributeMap& attributes = AttributeMap(),
-               const RegulatoryElementPtrs& regulatoryElements = RegulatoryElementPtrs())
-      : ConstPrimitive{std::make_shared<LaneletData>(id, leftBound, rightBound, attributes, regulatoryElements)} {}
+  // ConstLanelet(Id id, const LineString3d& leftBound, const LineString3d& rightBound,
+  //              const AttributeMap& attributes = AttributeMap(),
+  //              const RegulatoryElementPtrs& regulatoryElements = RegulatoryElementPtrs())
+  //     : ConstPrimitive{std::make_shared<LaneletData>(id, leftBound, rightBound, attributes, regulatoryElements)} {}
 
   //! Constructs a lanelet from id, attributes, regulatoryElements and bounds.
   ConstLanelet(Id id, const LineString3d& leftBound, const LineString3d& rightBound,
-              uint32_t version, const AttributeMap& attributes = AttributeMap(),
-              const RegulatoryElementPtrs& regulatoryElements = RegulatoryElementPtrs())
-      : ConstPrimitive{std::make_shared<LaneletData>(id, leftBound, rightBound, version, attributes, regulatoryElements)} {}
+              const AttributeMap& attributes = AttributeMap(),
+              const RegulatoryElementPtrs& regulatoryElements = RegulatoryElementPtrs(), uint32_t version = 0)
+      : ConstPrimitive{std::make_shared<LaneletData>(id, leftBound, rightBound, attributes, regulatoryElements, version)} {}
 
   //! Construct from the data of a different Lanelet
   explicit ConstLanelet(const std::shared_ptr<const LaneletData>& data, bool inverted = false)

@@ -216,7 +216,7 @@ class OsmFileParser {
       const auto ele = node.find_child_by_attribute(keyword::Tag, keyword::Key, keyword::Elevation)
                            .attribute(keyword::Value)
                            .as_double(0.);
-      const auto version = node.attribute(keyword::Version).as_int(0);
+      const uint32_t version = node.attribute(keyword::Version).as_int(0);
       nodes[id] = Node{id, attributes, {lat, lon, ele}, version};
     }
     return nodes;
@@ -231,7 +231,7 @@ class OsmFileParser {
       }
       const auto id = node.attribute(keyword::Id).as_llong(InvalId);
       const auto attributes = tags(node);
-      const auto version = node.attribute(keyword::Version).as_int(0);
+      const uint32_t  version = node.attribute(keyword::Version).as_int(0);
       const auto nodeIds = [&node] {
         Ids ids;
         for (auto refNode = node.child(keyword::Nd); refNode;  // NOLINT
@@ -262,9 +262,9 @@ class OsmFileParser {
         continue;
       }
       const auto id = node.attribute(keyword::Id).as_llong(InvalId);
-      const auto version = node.attribute(keyword::Version).as_int(0);
+      const uint32_t  version = node.attribute(keyword::Version).as_int(0);
       const auto attributes = tags(node);
-      auto& relation = relations.emplace(id, Relation{id, attributes, version, {}}).first->second;
+      auto& relation = relations.emplace(id, Relation{id, attributes, {}, version}).first->second;
 
       // resolve members
       auto& roles = relation.members;

@@ -142,7 +142,7 @@ class FromFileLoader {  // NOLINT
       std::tie(left, right) = geometry::align(left, right);
 
       // look for optional centerline
-      Lanelet lanelet(id, left, right, version, attributes);
+      Lanelet lanelet(id, left, right, attributes, {}, version);
       if (findRole(llElem.members, RoleNameString::Centerline) != llElem.members.end()) {
         auto center = getLaneletBorder(llElem, RoleNameString::Centerline);
         lanelet.setCenterline(center);

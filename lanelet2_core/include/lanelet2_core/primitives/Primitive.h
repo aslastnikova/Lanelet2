@@ -40,9 +40,7 @@ class PrimitiveData {
    * @brief Constructs a PrimitiveData object
    */
   
-  //explicit PrimitiveData(Id id, AttributeMap attributes = AttributeMap()) : id{id}, attributes{std::move(attributes)}, version(0) {}
-  explicit PrimitiveData(Id id, AttributeMap attributes = AttributeMap()) : id{id}, attributes{std::move(attributes)} {}
-  explicit PrimitiveData(Id id, uint32_t version, AttributeMap attributes = AttributeMap()) : id{id}, attributes{std::move(attributes)}, version{version} {}
+  PrimitiveData(Id id, AttributeMap attributes = AttributeMap(), uint32_t version = 0) : id{id}, attributes{std::move(attributes)}, version{version} {}
 
   Id id{InvalId};           //!< Id of this primitive (unique across one map)
   uint32_t version{0};           //!< Version of this primitive 
