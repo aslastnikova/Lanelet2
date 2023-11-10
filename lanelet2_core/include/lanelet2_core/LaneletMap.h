@@ -155,7 +155,7 @@ class PrimitiveLayer {
   /**
    * @brief increments versions for all elements in this layer
    */
-  void updateVersions();
+  void incrementVersions();
 
   /**
    * @brief sets target version to all elements in this layer
@@ -553,7 +553,7 @@ template <typename PrimitiveT>
 std::vector<ConstLayerPrimitive<PrimitiveT>> findUsages(const PrimitiveLayer<PrimitiveT>& layer, Id id);
 
 template <typename PrimitiveT>
-void updateVersions(const PrimitiveLayer<PrimitiveT>& layer);
+void incrementVersions(const PrimitiveLayer<PrimitiveT>& layer);
 
 ConstLanelets findUsagesInLanelets(const LaneletMapLayers& map, const ConstPoint3d& p);
 ConstAreas findUsagesInAreas(const LaneletMapLayers& map, const ConstPoint3d& p);

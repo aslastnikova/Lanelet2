@@ -405,10 +405,10 @@ auto wrapLayer(const char* layerName) {
       .def("nearest", nearest, (arg("point"), arg("n") = 1), "Gets a list of the nearest n primitives to a given point")
       .def("uniqueId", &LayerT::uniqueId, "Retrieve an ID that not yet used in this layer")
       .def(
-          "setVersions", +[](LayerT& self, uint32_t version) { return self.setVersions(version); }, arg("version"),
+          "setVersions", &LayerT::setVersions, arg("version"),
           "set given version to primitives")
       .def(
-          "updateVersions", +[](LayerT& self) { return self.updateVersions(); },
+          "increment_versions", +[](LayerT& self) { return self.incrementVersions(); },
           "update primitives versions");
 }
 

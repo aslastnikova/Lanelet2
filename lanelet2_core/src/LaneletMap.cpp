@@ -487,7 +487,7 @@ template <typename T>
 auto remove_ptr(T& object) -> std::enable_if_t<!is_shared_ptr<T>::value, T&> {return object;}
 
 template <typename T>
-void PrimitiveLayer<T>::updateVersions() {
+void PrimitiveLayer<T>::incrementVersions() {
   for (auto& pair : elements_) {
 
     auto& elem = remove_ptr(pair.second);
@@ -843,7 +843,7 @@ ConstAreas findUsagesInAreas(const LaneletMapLayers& map, const ConstPoint3d& p)
 }
 
 // template <typename PrimitiveT>
-// void updateVersions(const PrimitiveLayer<PrimitiveT>& layer) {
+// void incrementVersions(const PrimitiveLayer<PrimitiveT>& layer) {
 
 //    for(auto elem{layer.begin()}; elem !=layer.end(); elem++ )
 //     {

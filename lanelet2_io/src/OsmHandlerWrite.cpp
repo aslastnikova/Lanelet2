@@ -53,15 +53,15 @@ void removeAndFixPlaceholders(osm::Primitive** toRemove, osm::Roles& fromRoles,
 class ToFileWriter {
  public:
   static std::unique_ptr<osm::File> writeMap(const LaneletMap& laneletMap, const Projector& projector,
-                                             ErrorMessages& errors, const io::Configuration& params, bool updateVersions = false) {
+                                             ErrorMessages& errors, const io::Configuration& params, bool increment_versions = false) {
     ToFileWriter writer;
 
-    writer.writeNodes(laneletMap, projector, updateVersions);
-    writer.writeWays(laneletMap, updateVersions);
+    writer.writeNodes(laneletMap, projector, increment_versions);
+    writer.writeWays(laneletMap, increment_versions);
 
     // we have to wait until lanelets/areas are written
     auto unparsedLaneletAndAreaParameters = writer.appendRegulatoryElements(laneletMap.regulatoryElementLayer);
-    writer.appendLanelets(laneletMap.laneletLayer, updateVersions);
+    writer.appendLanelets(laneletMap.laneletLayer, increment_versions);
     writer.appendAreas(laneletMap.areaLayer);
     writer.resolveUnparsedMembers(unparsedLaneletAndAreaParameters);
 
@@ -73,11 +73,11 @@ class ToFileWriter {
   ToFileWriter() = default;
 
   // writers for every primitive
-  void writeNodes(const LaneletMap& map, const Projector& projector, bool updateVersions = false) {
+  void writeNodes(const LaneletMap& map, const Projector& projector, bool increment_versions = false) {
     auto& osmNodes = file_->nodes;
     for (const auto& point : map.pointLayer) {
 
-      const uint32_t version = updateVersions ?
+      const uint32_t version = increment_versions ?
                      point.version() + 1  :
                      point.version() == 0 ? 1 : point.version();
 
@@ -90,27 +90,27 @@ class ToFileWriter {
     }
   }
 
-  void writeWays(const LaneletMap& map, bool updateVersions = false) {
+  void writeWays(const LaneletMap& map, bool increment_versions = false) {
     auto& osmWays = file_->ways;
     for (const auto& lineString : map.lineStringLayer) {
       if (lineString.inverted()) {
-        writeOsmWay(lineString.invert(), osmWays, updateVersions);
+        writeOsmWay(lineString.invert(), osmWays, increment_versions);
       } else {
-        writeOsmWay(lineString, osmWays, updateVersions);
+        writeOsmWay(lineString, osmWays, increment_versions);
       }
     }
     for (const auto& polygon : map.polygonLayer) {
-      writeOsmWay(polygon, osmWays, updateVersions);
+      writeOsmWay(polygon, osmWays, increment_versions);
     }
   }
 
-  void appendLanelets(const LaneletLayer& laneletLayer, bool updateVersions = false) {
+  void appendLanelets(const LaneletLayer& laneletLayer, bool increment_versions = false) {
     for (const auto& lanelet : laneletLayer) {
       const auto id = lanelet.id();
       auto attributes = getAttributes(lanelet.attributes());
       attributes.emplace(AttributeNamesString::Type, AttributeValueString::Lanelet);
 
-      const uint32_t version = updateVersions ?
+      const uint32_t version = increment_versions ?
                      lanelet.version() + 1  :
                      lanelet.version() == 0 ? 1 : lanelet.version();
 
@@ -178,11 +178,11 @@ class ToFileWriter {
   }
 
   template <typename PrimT>
-  void writeOsmWay(const PrimT& mapWay, osm::Ways& osmWays, bool updateVersions) {
+  void writeOsmWay(const PrimT& mapWay, osm::Ways& osmWays, bool increment_versions) {
     const auto id = mapWay.id();
     auto wayAttributes = getAttributes(mapWay.attributes());
 
-    const uint32_t version = updateVersions ?
+    const uint32_t version = increment_versions ?
                    mapWay.version() + 1  :
                    mapWay.version() == 0 ? 1 : mapWay.version();
 
@@ -312,9 +312,9 @@ void testAndPrintLocaleWarning(ErrorMessages& errors) {
 }
 }  // namespace
 
-void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params,  bool updateVersions) const {
+void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params,  bool increment_versions) const {
   testAndPrintLocaleWarning(errors);
-  auto file = toOsmFile(laneletMap, errors, params, updateVersions);
+  auto file = toOsmFile(laneletMap, errors, params, increment_versions);
   auto doc = osm::write(*file, params);
   auto res = doc->save_file(filename.c_str(), "  ");
   if (!res) {
@@ -322,8 +322,8 @@ void OsmWriter::write(const std::string& filename, const LaneletMap& laneletMap,
   }
 }
 
-std::unique_ptr<osm::File> OsmWriter::toOsmFile(const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params, bool updateVersions) const {
-  return ToFileWriter::writeMap(laneletMap, projector(), errors, params, updateVersions);
+std::unique_ptr<osm::File> OsmWriter::toOsmFile(const LaneletMap& laneletMap, ErrorMessages& errors, const io::Configuration& params, bool increment_versions) const {
+  return ToFileWriter::writeMap(laneletMap, projector(), errors, params, increment_versions);
 }
 }  // namespace io_handlers
 }  // namespace lanelet

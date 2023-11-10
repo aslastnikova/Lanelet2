@@ -79,15 +79,15 @@ BOOST_PYTHON_MODULE(PYTHON_API_MODULE_NAME) {  // NOLINT
       "Loads a map robustly. Parser errors are returned as second member of "
       "the tuple. If there are errors, the map will be incomplete somewhere.");
 
-  py::def("write", writeProjectorWrapper, (py::arg("filename"), py::arg("map"), py::arg("projector"), py::arg("update_version") = false, py::arg("params") = Optional<io::Configuration>{}),
+  py::def("write", writeProjectorWrapper, (py::arg("filename"), py::arg("map"), py::arg("projector"), py::arg("increment_versions") = false, py::arg("params") = Optional<io::Configuration>{}),
       "Writes the map to a file. The extension determines which format will "
       "be used (usually .osm)");
 
-  py::def("write", writeWrapper, (py::arg("filename"), py::arg("map"), py::arg("origin"), py::arg("update_version") = false, py::arg("params") = Optional<io::Configuration>{}),
+  py::def("write", writeWrapper, (py::arg("filename"), py::arg("map"), py::arg("origin"), py::arg("increment_versions") = false, py::arg("params") = Optional<io::Configuration>{}),
       "Writes the map to a file. The extension determines which format will "
       "be used (usually .osm)");
 
-  py::def("writeRobust", writeWithErrorWrapper, (py::arg("filename"), py::arg("map"), py::arg("projector"), py::arg("update_version") = false, py::arg("params") = Optional<io::Configuration>{}),
+  py::def("writeRobust", writeWithErrorWrapper, (py::arg("filename"), py::arg("map"), py::arg("projector"), py::arg("increment_versions") = false, py::arg("params") = Optional<io::Configuration>{}),
       "Writes a map robustly and returns writer errors. If there are errors, "
       "the map will be incomplete somewhere.");
 }

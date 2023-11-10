@@ -111,7 +111,7 @@ std::vector<std::string> supportedParserExtensions();
  * (lat/lon) data. If no origin is specified, the written map will most likely be not correctly located and deformed.
  */
 void write(const std::string& filename, const lanelet::LaneletMap& map, const Origin& origin = Origin::defaultOrigin(),
-           ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration(), bool updateVersions = false);
+           ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration(), bool increment_versions = false);
 
 // void write(const std::string& filename, const lanelet::LaneletMap& map, const Origin& origin = Origin::defaultOrigin(),
 //            ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration());
@@ -128,7 +128,7 @@ void write(const std::string& filename, const lanelet::LaneletMap& map, const Or
  * @throws lanelet2::IOError if the file could not be created or writing failed.
  */
 void write(const std::string& filename, const LaneletMap& map, const Projector& projector,
-           ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration(), bool updateVersions = false);
+           ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration(), bool increment_versions = false);
 
 // void write(const std::string& filename, const LaneletMap& map, const Projector& projector,
 //            ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration());
@@ -145,7 +145,7 @@ void write(const std::string& filename, const LaneletMap& map, const Projector& 
  */
 void write(const std::string& filename, const lanelet::LaneletMap& map, const std::string& writerName,
            const Origin& origin = Origin::defaultOrigin(), ErrorMessages* errors = nullptr,
-           const io::Configuration& params = io::Configuration(), bool updateVersions = false);
+           const io::Configuration& params = io::Configuration(), bool increment_versions = false);
 
 
 // void write(const std::string& filename, const lanelet::LaneletMap& map, const std::string& writerName,
@@ -165,7 +165,7 @@ void write(const std::string& filename, const lanelet::LaneletMap& map, const st
  */
 void write(const std::string& filename, const LaneletMap& map, const std::string& writerName,
            const Projector& projector, ErrorMessages* errors = nullptr,
-           const io::Configuration& params = io::Configuration(), bool updateVersions = false);
+           const io::Configuration& params = io::Configuration(), bool increment_versions = false);
 
 // void write(const std::string& filename, const LaneletMap& map, const std::string& writerName,
 //            const Projector& projector, ErrorMessages* errors = nullptr,
