@@ -102,24 +102,10 @@ struct ArcCoordinates {
 
 //! Common data management class for all Point primitives.
 //! @ingroup DataObjects
-class PointData : public PrimitiveData {  // NOLINT
- public:
- public:
-  // PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
-  //     : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
-
-  // PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
-  //     : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
-    
+class PointData : public PrimitiveData {  // NOLINT    
  public: 
-  // PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
-  //     : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
-
-  // PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
-  //     : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
-    
-    PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap(), uint32_t version = 0)
-      : PrimitiveData(id, attributes, version), point(point), point2d_{point.x(), point.y()} {}
+  PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap(), uint32_t version = 0)
+    : PrimitiveData(id, attributes, version), point(point), point2d_{point.x(), point.y()} {}
 
   PointData(const PointData&) = delete;
   PointData& operator=(const LineStringData&) = delete;
