@@ -474,23 +474,31 @@ typename PrimitiveLayer<T>::const_iterator PrimitiveLayer<T>::find(Id id) const 
   return elements_.find(id);
 }
 
-template <typename T>
-struct is_shared_ptr : std::false_type{ };
 
-template <typename T>
-struct is_shared_ptr<std::shared_ptr<T>> : std::true_type{};
+/**
+ * @brief This namespace defines function, which: 
+ * - if argument is a ptr, returns the reference on object 
+ * - if argument is an object, returns the reference on the object
+ */
+namespace {
+  template <typename T>
+  struct is_shared_ptr : std::false_type{ };
 
-template <typename T>
-auto remove_ptr(T& object) -> std::enable_if_t<is_shared_ptr<T>::value, decltype(*object)> {return *object;}
+  template <typename T>
+  struct is_shared_ptr<std::shared_ptr<T>> : std::true_type{};
 
-template <typename T>
-auto remove_ptr(T& object) -> std::enable_if_t<!is_shared_ptr<T>::value, T&> {return object;}
+  template <typename T>
+  auto get_reference(T& object) -> std::enable_if_t<is_shared_ptr<T>::value, decltype(*object)> {return *object;}
+
+  template <typename T>
+  auto get_reference(T& object) -> std::enable_if_t<!is_shared_ptr<T>::value, T&> {return object;}
+}
 
 template <typename T>
 void PrimitiveLayer<T>::incrementVersions() {
   for (auto& pair : elements_) {
 
-    auto& elem = remove_ptr(pair.second);
+    auto& elem = get_reference(pair.second);
     elem.setVersion(elem.version() + 1);
   }
 }
@@ -499,7 +507,7 @@ template <typename T>
 void PrimitiveLayer<T>::setVersions(uint32_t version) {
   for (auto& pair : elements_) {
 
-    auto& elem = remove_ptr(pair.second);
+    auto& elem = get_reference(pair.second);
     elem.setVersion(version);
   }
 }
