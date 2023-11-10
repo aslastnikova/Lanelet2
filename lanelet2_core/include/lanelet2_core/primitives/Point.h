@@ -104,6 +104,14 @@ struct ArcCoordinates {
 //! @ingroup DataObjects
 class PointData : public PrimitiveData {  // NOLINT
  public:
+ public:
+  // PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
+  //     : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
+
+  // PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
+  //     : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
+    
+ public: 
   // PointData(Id id, BasicPoint3d point, const AttributeMap& attributes = AttributeMap())
   //     : PrimitiveData(id, attributes), point(point), point2d_{point.x(), point.y()} {}
 
@@ -214,7 +222,6 @@ class ConstPoint3d : public ConstPoint2d {
   static constexpr traits::Dimensions Dimension = traits::Dimensions::Three;
 
   using ConstPoint2d::ConstPoint2d;
-  // using ConstPoint2d::version;
   ConstPoint3d() = default;
   explicit ConstPoint3d(const ConstPoint2d& other) : ConstPoint2d(other) {}
 

@@ -113,9 +113,6 @@ std::vector<std::string> supportedParserExtensions();
 void write(const std::string& filename, const lanelet::LaneletMap& map, const Origin& origin = Origin::defaultOrigin(),
            ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration(), bool increment_versions = false);
 
-// void write(const std::string& filename, const lanelet::LaneletMap& map, const Origin& origin = Origin::defaultOrigin(),
-//            ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration());
-
 /**
  * @brief writes a map to a file
  * @param filename file to write to (parent folders must exist!). The extension is used to deduce the format.
@@ -130,8 +127,6 @@ void write(const std::string& filename, const lanelet::LaneletMap& map, const Or
 void write(const std::string& filename, const LaneletMap& map, const Projector& projector,
            ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration(), bool increment_versions = false);
 
-// void write(const std::string& filename, const LaneletMap& map, const Projector& projector,
-//            ErrorMessages* errors = nullptr, const io::Configuration& params = io::Configuration());
 /**
  * @brief writes a map to a file
  * @param filename file to write to (parent folders must exist!). The extension is used to deduce the format.
@@ -146,11 +141,6 @@ void write(const std::string& filename, const LaneletMap& map, const Projector& 
 void write(const std::string& filename, const lanelet::LaneletMap& map, const std::string& writerName,
            const Origin& origin = Origin::defaultOrigin(), ErrorMessages* errors = nullptr,
            const io::Configuration& params = io::Configuration(), bool increment_versions = false);
-
-
-// void write(const std::string& filename, const lanelet::LaneletMap& map, const std::string& writerName,
-//            const Origin& origin = Origin::defaultOrigin(), ErrorMessages* errors = nullptr,
-//            const io::Configuration& params = io::Configuration());
            
 /**
  * @brief writes a map to a file
@@ -167,9 +157,6 @@ void write(const std::string& filename, const LaneletMap& map, const std::string
            const Projector& projector, ErrorMessages* errors = nullptr,
            const io::Configuration& params = io::Configuration(), bool increment_versions = false);
 
-// void write(const std::string& filename, const LaneletMap& map, const std::string& writerName,
-//            const Projector& projector, ErrorMessages* errors = nullptr,
-//            const io::Configuration& params = io::Configuration());
 /**
  * @brief returns the names of the currently registered writing (writers from plugins included)
  * @return list of names

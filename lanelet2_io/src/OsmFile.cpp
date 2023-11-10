@@ -134,7 +134,7 @@ class OsmFileWriter {
       xmlNode.append_attribute(keyword::Id) = LongLong(node.second.id);
       if (node.second.id > 0) {
         xmlNode.append_attribute(keyword::Visible) = "true";
-        xmlNode.append_attribute(keyword::Version) = toJosmStyle(node.second.version).c_str();
+        xmlNode.append_attribute(keyword::Version) = node.second.version;
       }
       xmlNode.append_attribute(keyword::Lat) = toJosmStyle(node.second.point.lat).c_str();
       xmlNode.append_attribute(keyword::Lon) = toJosmStyle(node.second.point.lon).c_str();

@@ -139,8 +139,6 @@ struct SelectInsertIterator<typename SelectLsIterator<Point2d>::Iterator> {
 class LineStringData : public PrimitiveData {
  public:
   explicit LineStringData(Id id) : PrimitiveData(id) {}
-  // LineStringData(Id id, Points3d points, AttributeMap attributes)
-  //     : PrimitiveData(id, std::move(attributes)), points_(std::move(points)) {}
 
   LineStringData(Id id, Points3d points, AttributeMap attributes, uint32_t version = 0)
       : PrimitiveData(id, std::move(attributes), version), points_(std::move(points)) {}

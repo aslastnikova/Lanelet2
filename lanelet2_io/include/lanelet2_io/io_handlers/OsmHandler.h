@@ -20,9 +20,6 @@ class OsmWriter : public Writer {
   void write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors,
              const io::Configuration& params = io::Configuration(), bool increment_versions = false) const override;
   
-  // void write(const std::string& filename, const LaneletMap& laneletMap, ErrorMessages& errors,
-  //            const io::Configuration& params = io::Configuration(), bool increment_versions = false) const;
-
   std::unique_ptr<osm::File> toOsmFile(const LaneletMap& laneletMap, ErrorMessages& errors,
                                        const io::Configuration& params = io::Configuration(),  
                                        bool increment_versions = false) const;

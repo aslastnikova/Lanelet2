@@ -220,7 +220,6 @@ template <typename T>
 void setZWrapper(T& obj, double z) {
   obj.z() = z;
 }
-
 template <typename T>
 double getXWrapper(const T& obj) {
   return obj.x();

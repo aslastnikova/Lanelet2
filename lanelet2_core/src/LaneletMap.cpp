@@ -15,8 +15,6 @@
 #include "lanelet2_core/geometry/Polygon.h"
 #include "lanelet2_core/geometry/RegulatoryElement.h"
 
-#include <type_traits>
-
 // boost geometry stuff
 namespace bgi = boost::geometry::index;
 
@@ -477,7 +475,7 @@ typename PrimitiveLayer<T>::const_iterator PrimitiveLayer<T>::find(Id id) const 
 
 /**
  * @brief This namespace defines function, which: 
- * - if argument is a ptr, returns the reference on object 
+ * - if argument is a ptr, returns the reference on object it points to
  * - if argument is an object, returns the reference on the object
  */
 namespace {
@@ -488,17 +486,16 @@ namespace {
   struct is_shared_ptr<std::shared_ptr<T>> : std::true_type{};
 
   template <typename T>
-  auto get_reference(T& object) -> std::enable_if_t<is_shared_ptr<T>::value, decltype(*object)> {return *object;}
+  auto getReference(T& object) -> std::enable_if_t<is_shared_ptr<T>::value, decltype(*object)> {return *object;}
 
   template <typename T>
-  auto get_reference(T& object) -> std::enable_if_t<!is_shared_ptr<T>::value, T&> {return object;}
+  auto getReference(T& object) -> std::enable_if_t<!is_shared_ptr<T>::value, T&> {return object;}
 }
 
 template <typename T>
 void PrimitiveLayer<T>::incrementVersions() {
   for (auto& pair : elements_) {
-
-    auto& elem = get_reference(pair.second);
+    auto& elem = getReference(pair.second);
     elem.setVersion(elem.version() + 1);
   }
 }
@@ -506,8 +503,7 @@ void PrimitiveLayer<T>::incrementVersions() {
 template <typename T>
 void PrimitiveLayer<T>::setVersions(uint32_t version) {
   for (auto& pair : elements_) {
-
-    auto& elem = get_reference(pair.second);
+    auto& elem = getReference(pair.second);
     elem.setVersion(version);
   }
 }
@@ -849,15 +845,6 @@ ConstAreas findUsagesInAreas(const LaneletMapLayers& map, const ConstPoint3d& p)
   areas.erase(remove, areas.end());
   return areas;
 }
-
-// template <typename PrimitiveT>
-// void incrementVersions(const PrimitiveLayer<PrimitiveT>& layer) {
-
-//    for(auto elem{layer.begin()}; elem !=layer.end(); elem++ )
-//     {
-//         std::cout << *elem << std::endl;
-//     }
-// }
 
 LaneletMapUPtr createMap(const Points3d& fromPoints) {
   return std::make_unique<LaneletMap>(LaneletLayer::Map(), AreaLayer::Map(), RegulatoryElementLayer::Map(),

@@ -42,17 +42,17 @@ py::tuple loadWithErrorWrapper(const std::string& filename, const Projector& pro
   return py::make_tuple(map, errs);
 }
 
-void writeWrapper(const std::string& filename, const LaneletMap& map, const Origin& origin, bool updateVersion, const Optional<io::Configuration>& params) {
-  write(filename, map, origin, nullptr, params.get_value_or(io::Configuration()), updateVersion);
+void writeWrapper(const std::string& filename, const LaneletMap& map, const Origin& origin, bool increment_versions, const Optional<io::Configuration>& params) {
+  write(filename, map, origin, nullptr, params.get_value_or(io::Configuration()), increment_versions);
 }
 
-void writeProjectorWrapper(const std::string& filename, const LaneletMap& map, const Projector& projector, bool updateVersion, const Optional<io::Configuration>& params) {
-  write(filename, map, projector, nullptr, params.get_value_or(io::Configuration()), updateVersion);
+void writeProjectorWrapper(const std::string& filename, const LaneletMap& map, const Projector& projector, bool increment_versions, const Optional<io::Configuration>& params) {
+  write(filename, map, projector, nullptr, params.get_value_or(io::Configuration()), increment_versions);
 }
 
-ErrorMessages writeWithErrorWrapper(const std::string& filename, const LaneletMap& map, const Projector& projector, bool updateVersion, const Optional<io::Configuration>& params) {
+ErrorMessages writeWithErrorWrapper(const std::string& filename, const LaneletMap& map, const Projector& projector, bool increment_versions, const Optional<io::Configuration>& params) {
   ErrorMessages errs;
-  write(filename, map, projector, &errs, params.get_value_or(io::Configuration()), updateVersion);
+  write(filename, map, projector, &errs, params.get_value_or(io::Configuration()), increment_versions);
   return errs;
 }
 
