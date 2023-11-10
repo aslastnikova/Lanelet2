@@ -192,7 +192,6 @@ class ToFileWriter {
     try {
       const auto wayNodes =
           utils::transform(mapWay, [&nodes = file_->nodes](const auto& elem) { return &nodes.at(elem.id()); });
-      auto way = osm::Way(id, std::move(wayAttributes), std::move(wayNodes), version);
       osmWays.emplace(id, osm::Way(id, std::move(wayAttributes), std::move(wayNodes), version));
     } catch (NoSuchPrimitiveError& e) {
       writeError(id, "Way has points that are not point layer: "s + e.what());

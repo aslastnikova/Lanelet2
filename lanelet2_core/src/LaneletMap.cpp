@@ -474,22 +474,26 @@ typename PrimitiveLayer<T>::const_iterator PrimitiveLayer<T>::find(Id id) const 
 
 
 /**
- * @brief This namespace defines function, which: 
- * - if argument is a ptr, returns the reference on object it points to
- * - if argument is an object, returns the reference on the object
+ * @brief This namespace defines function conditionally returning reference: 
+ * - if an argument is a ptr, returns the reference to the object it points to
+ * - if an argument is an object, returns the reference to the object
  */
 namespace {
   template <typename T>
-  struct is_shared_ptr : std::false_type{ };
+  struct is_shared_ptr : std::false_type{};
 
   template <typename T>
   struct is_shared_ptr<std::shared_ptr<T>> : std::true_type{};
 
   template <typename T>
-  auto getReference(T& object) -> std::enable_if_t<is_shared_ptr<T>::value, decltype(*object)> {return *object;}
+  auto getReference(T& object) -> std::enable_if_t<is_shared_ptr<T>::value, decltype(*object)> {
+    return *object;
+  }
 
   template <typename T>
-  auto getReference(T& object) -> std::enable_if_t<!is_shared_ptr<T>::value, T&> {return object;}
+  auto getReference(T& object) -> std::enable_if_t<!is_shared_ptr<T>::value, T&> {
+    return object;
+  }
 }
 
 template <typename T>

@@ -407,7 +407,7 @@ auto wrapLayer(const char* layerName) {
           "setVersions", &LayerT::setVersions, arg("version"),
           "set given version to primitives")
       .def(
-          "increment_versions", +[](LayerT& self) { return self.incrementVersions(); },
+          "increment_versions", &LayerT::incrementVersions,
           "update primitives versions");
 }
 
